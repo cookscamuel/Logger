@@ -1,0 +1,1 @@
+### A short project to help me test my JS abilities and to help my mother have a version of this game with no timer.
