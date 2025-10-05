@@ -8,6 +8,40 @@ import treeQueue from "./tree.js";
 
 document.addEventListener("click", begin);
 
+// Function used to setup the game.
+function begin() {
+
+    // Prevent multiple clicks and remove the start screen.
+    document.removeEventListener("click", begin);
+
+    // Remove the loading prompt.
+    document.getElementById('click-prompt').remove()
+    
+    // Create the tree queue.
+    const theTree = new treeQueue();
+
+    // Get the left, center, and right parts of the screen.
+    var screenLeft = document.getElementById('screen-left');
+    var screenCenter = document.getElementById("screen-center");
+    var screenRight = document.getElementById('screen-right');
+    var body = document.getElementById("body");
+    
+    buildTree(theTree, screenCenter);
+    
+    var player = document.createElement("img");
+    player.src = "./media/lumberjack-0.png";
+    player.style.width = "20vh";
+    player.style.display = "block";
+    player.style.margin = "auto";
+    screenLeft.appendChild(player);
+    
+    screenLeft.addEventListener("click", () => chop(theTree, screenLeft, screenCenter, screenRight, player, body));
+    screenRight.addEventListener("click", () => chop(theTree, screenLeft, screenCenter, screenRight, player, body));
+
+    handlePlayerSide(theTree, screenLeft, screenRight, player, 0);
+
+}
+
 // For the tree segment options, 0 is a left branch, 1 is neither, and 2 is a right branch.
 // The first tree segment always has to be a 1 so the player does not die instantly.
 
@@ -47,18 +81,33 @@ function buildTree(theTree, screenCenter) {
 
 }
 
-function chop(theTree, screenCenter, body) {
+function handlePlayerSide(theTree, screenLeft, screenRight, player, side) {
+
+    // Evaluate which side of the tree the player should be on.
+    switch (side) {
+        // Place player on the left.
+        case 0:
+            screenRight.innerHTML = '';
+            screenLeft.appendChild(player);
+            break;
+        
+        // Place player on the right.
+        case 1:
+            screenLeft.innerHTML = '';
+            screenRight.appendChild(player);
+            break;
+    }
+
+}
+
+function chop(theTree, screenLeft, screenCenter, screenRight, player, body) {
+
+    // Flip sides.
+    event.target.id == "screen-left" ? handlePlayerSide(theTree, screenLeft, screenRight, player, 0) : handlePlayerSide(theTree, screenLeft, screenRight, player, 1);
 
     // Check if they are going into a branch at the ground level.
     if ((event.target.id == "screen-left" && theTree.getFront() == 0) || (event.target.id == "screen-right" && theTree.getFront() == 2)) {
-        body.innerHTML = '';
-        body.style.background = 'linear-gradient(#9e2424, #701212)';
-        body.style.display = 'block';
-        
-        var gameOver = document.createElement("p");
-        gameOver.id = "game-over";
-        gameOver.innerText = "GAME OVER!\nSCORE: " + theTree.getScore();
-        body.appendChild(gameOver);
+        gameOver(theTree);
         return;
     }
     
@@ -93,14 +142,7 @@ function chop(theTree, screenCenter, body) {
 
     // Check if a branch has fallen on top of the player.
     if ((event.target.id == "screen-left" && theTree.getFront() == 0) || (event.target.id == "screen-right" && theTree.getFront() == 2)) {
-        body.innerHTML = '';
-        body.style.background = 'linear-gradient(#9e2424, #701212)';
-        body.style.display = 'block';
-        
-        var gameOver = document.createElement("p");
-        gameOver.id = "game-over";
-        gameOver.innerText = "GAME OVER!\nSCORE: " + theTree.getScore();
-        body.appendChild(gameOver);
+        gameOver(theTree);
         return;
     }
     
@@ -110,27 +152,48 @@ function chop(theTree, screenCenter, body) {
 
 }
 
-// An initializer function, but only on the first click.
-function begin() {
-
-    // Prevent multiple clicks and remove the start screen.
-    document.removeEventListener("click", begin);
-
-    // Remove the loading prompt.
-    document.getElementById('click-prompt').remove();
+// Function called when the player loses.
+function gameOver(theTree) {
+    body.innerHTML = '';
+    body.style.background = 'linear-gradient(#9e2424, #701212)';
+    body.style.display = 'block';
     
-    // Create the tree queue.
-    const theTree = new treeQueue();
-
-    // Get the left, center, and right parts of the screen.
-    var screenLeft = document.getElementById('screen-left');
-    var screenCenter = document.getElementById("screen-center");
-    var screenRight = document.getElementById('screen-right');
-    var body = document.getElementById("body");
+    var gameOverTitle = document.createElement("p");
+    gameOverTitle.id = "game-over";
+    gameOverTitle.innerText = "GAME OVER!\nSCORE: " + theTree.getScore();
+    body.appendChild(gameOverTitle);
     
-    buildTree(theTree, screenCenter);
-    screenLeft.addEventListener("click", () => chop(theTree, screenCenter, body));
-    screenRight.addEventListener("click", () => chop(theTree, screenCenter, body));
+    var restartButton = document.createElement("button");
+    restartButton.id = "restart-button";
+    restartButton.innerText = "RETRY";
+    body.appendChild(restartButton);
+    restartButton.addEventListener("click", restart);
+}
 
 
+
+// Function used to restart the game.
+function restart() {
+    body.innerHTML = '';
+    body.style = '';
+    
+    var replaceLeft = document.createElement("div");
+    var replaceCenter = document.createElement("div");
+    var replaceRight = document.createElement("div");
+    var replaceScore = document.createElement("div");
+    var replacePrompt = document.createElement("div");
+
+    replaceLeft.id = "screen-left";
+    replaceCenter.id = "screen-center";
+    replaceRight.id = "screen-right";
+    replaceScore.id = "score";
+    replacePrompt.id = "click-prompt";
+
+    body.appendChild(replaceLeft);
+    body.appendChild(replaceCenter);
+    body.appendChild(replaceRight);
+    replaceCenter.appendChild(replaceScore);
+    replaceCenter.appendChild(replacePrompt);
+
+    begin();
 }

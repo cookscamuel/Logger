@@ -6,9 +6,11 @@
 body {
     display: grid;
     grid-template-columns: 40% 20% 40%;
-    height: 100vh;
+    height: 95vh;
     overflow-y: hidden;
     font-family: VCR;
+    letter-spacing: -2px;
+    user-select: none;
 }
 
 #click-prompt {
@@ -24,6 +26,7 @@ body {
     display: grid;
     grid-template-columns: auto;
     background-color: rgb(109, 68, 14);
+    cursor: not-allowed;
 }
 
 #screen-right {
@@ -31,14 +34,35 @@ body {
 }
 
 #score {
-    text-align: center;
-    z-index: 2;
+    z-index: 1;
     color: gold;
     font-size: 400%;
+    position: absolute;
+    width: 20%;
+    text-align: center;
 }
 
 #game-over {
     text-align: center;
     color: rgb(255, 255, 255);
     font-size: 400%;
+}
+
+#restart-button {
+    display: block;
+    margin: auto;
+    font-size: 300%;
+    color: white;
+    background-color: black;
+    font-family: VCR;
+}
+
+#restart-button:hover {
+    background: rgb(36, 36, 36);
+    transition: all 0.2s;
+}
+
+#restart-button:active {
+    color: gray;
+    background: black;
 }
