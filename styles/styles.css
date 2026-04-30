@@ -23,8 +23,9 @@ body {
 }
 
 #screen-center {
-    display: grid;
-    grid-template-columns: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
     background-color: rgb(109, 68, 14);
     cursor: not-allowed;
 }
@@ -38,8 +39,8 @@ body {
     color: gold;
     font-size: 400%;
     position: absolute;
-    width: 20%;
-    text-align: center;
+    left: 50%;
+    translate: -50%;
 }
 
 #game-over {
@@ -65,4 +66,21 @@ body {
 #restart-button:active {
     color: gray;
     background: black;
+}
+
+#player {
+    width: 20vh;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.log-segments {
+    margin: auto;
+    width: 55vw;
+    height: 16.6vh;
+    pointer-events: none;
+    z-index: 0;
 }
