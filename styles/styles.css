@@ -1,6 +1,6 @@
 @font-face {
     font-family: VCR;
-    src: url(../media/VCR_OSD_MONO_1.001.ttf);
+    src: url(../media/vcr.ttf);
 }
 
 body {
@@ -83,4 +83,10 @@ body {
     height: 15vh;
     pointer-events: none;
     z-index: 0;
+}
+
+@media (width <=1024px) {
+    body {
+        height: 95vh;
+    }
 }
