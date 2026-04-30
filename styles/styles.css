@@ -6,10 +6,12 @@
 body {
     display: grid;
     grid-template-columns: 40% 20% 40%;
-    height: 95vh;
+    height: 100vh;
     overflow-y: hidden;
     font-family: VCR;
     letter-spacing: -2px;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
     user-select: none;
 }
 
@@ -80,7 +82,7 @@ body {
 .log-segments {
     margin: auto;
     width: 55vw;
-    height: 16.6vh;
+    height: 15%;
     pointer-events: none;
     z-index: 0;
 }
