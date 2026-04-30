@@ -10,8 +10,6 @@ body {
     overflow-y: hidden;
     font-family: VCR;
     letter-spacing: -2px;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
     user-select: none;
 }
 
