@@ -82,7 +82,7 @@ body {
 .log-segments {
     margin: auto;
     width: 55vw;
-    height: 15%;
+    height: 15vh;
     pointer-events: none;
     z-index: 0;
 }
