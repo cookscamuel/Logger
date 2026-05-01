@@ -38,7 +38,7 @@ body {
 }
 
 #score {
-    z-index: 1;
+    z-index: 3;
     color: gold;
     font-size: 400%;
     position: absolute;
@@ -85,15 +85,15 @@ body {
     width: 55vw;
     height: 15vh;
     pointer-events: none;
-    z-index: 0;
+    z-index: 2;
 }
 
 @media (width <=1024px) {
     body {
-        height: 85vh;
+        height: 90vh;
     }
 
     .log-segments {
-        height: 12vh;
+        height: 15vh;
     }
 }
