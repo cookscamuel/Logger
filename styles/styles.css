@@ -90,6 +90,10 @@ body {
 
 @media (width <=1024px) {
     body {
-        height: 95vh;
+        height: 85vh;
+    }
+
+    .log-segments {
+        height: 12vh;
     }
 }
