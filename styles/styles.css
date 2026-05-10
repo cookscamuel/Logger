@@ -6,23 +6,44 @@
 body {
     display: grid;
     grid-template-columns: 40% 20% 40%;
-    height: 100vh;
+    height: 95vh;
     overflow-y: hidden;
     font-family: VCR;
     letter-spacing: -2px;
     user-select: none;
-    touch-action: manipulation;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
+    touch-action: none;
+    margin: 0;
+    background-image: url('../media/textures/grass.png');
+    background-size: 11%;
+    background-repeat: repeat;
+    image-rendering: pixelated; 
+    image-rendering: crisp-edges;
+}
+
+@keyframes flashText {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
 }
 
 #click-prompt {
     text-align: center;
     color: gold;
+    font-size: 200%;
+    animation: flashText infinite 1s;
+    animation-timing-function: steps(1); 
 }
 
-#screen-left {
+#screen-left, #screen-right {
     background-color: rgb(139, 139, 139);
+    background-image: url('../media/textures/sky.png');
+    background-size: 55%;
+    background-repeat: repeat;
+    image-rendering: pixelated; 
+    image-rendering: crisp-edges;
 }
 
 #screen-center {
@@ -31,10 +52,11 @@ body {
     flex-direction: column;
     background-color: rgb(109, 68, 14);
     cursor: not-allowed;
-}
-
-#screen-right {
-    background-color: rgb(139, 139, 139);
+    background-image: url('../media/textures/bark_1.png');
+    background-size: 50%;
+    background-repeat: repeat;
+    image-rendering: pixelated; 
+    image-rendering: crisp-edges;
 }
 
 #score {
@@ -44,6 +66,7 @@ body {
     position: absolute;
     left: 50%;
     translate: -50%;
+    margin-top: 5vh;
 }
 
 #game-over {
@@ -63,37 +86,37 @@ body {
 
 #restart-button:hover {
     background: rgb(36, 36, 36);
-    transition: all 0.2s;
-}
-
-#restart-button:active {
-    color: gray;
-    background: black;
 }
 
 #player {
     width: 20vh;
     display: block;
     position: absolute;
-    bottom: 0;
-    z-index: 1;
+    bottom: 5vh;
+    z-index: 2;
     pointer-events: none;
 }
 
 .log-segments {
     margin: auto;
-    width: 55vw;
-    height: 15vh;
+    width: 25vw;
+    height: 15.83vh;
     pointer-events: none;
-    z-index: 2;
+    z-index: 1;
 }
 
 @media (width <=1024px) {
     body {
-        height: 90vh;
+        height: 85vh;
+        background-size: 35%;
     }
 
     .log-segments {
-        height: 15vh;
+        width: 60vw;
+        height: 12.16vh;
+    }
+
+    #player {
+        bottom: 15vh;
     }
 }

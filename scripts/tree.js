@@ -1,3 +1,4 @@
+// Basic queue structure for tracking the logs. Score is here too for convenience.
 export default class treeQueue {
 
     constructor() {
@@ -7,6 +8,7 @@ export default class treeQueue {
         this.score = 0;
     }
 
+    // Add a new log segment.
     addLog(val) {
         if (this.front == -1) {
             this.front = 0;
@@ -15,6 +17,7 @@ export default class treeQueue {
         this.items[this.rear] = val;
     }
 
+    // Remove a log segment.
     removeLog() {
         if (this.front != -1 || this.front > this.rear) {
             for (var i = 0; i < this.rear; i++) {

@@ -1,49 +1,224 @@
 import treeQueue from './tree.js';
 
-const IDLE = loadAsset('./media/textures/idle.png');
-const CUT = loadAsset('./media/textures/cut.png');
-const DEAD = loadAsset('./media/textures/dead.png');
-IDLE.id = CUT.id = DEAD.id ='player';
+// These shouldn't be just hanging out here loose like this. It's fine for now though.
+const PLAYER_IDLE = loadAsset('./media/textures/idle.gif');
+const PLAYER_CUT = loadAsset('./media/textures/cut.png');
+const PLAYER_DEAD = loadAsset('./media/textures/dead.png');
+PLAYER_IDLE.id = PLAYER_CUT.id = PLAYER_DEAD.id = 'player';
 
-const BRANCH = loadAsset('./media/textures/branch.svg');
+const TREE_TRUNK = [
+    loadAsset('./media/textures/bark_0.png'), 
+    loadAsset('./media/textures/bark_1.png')
+];
+
+// Constants that can be referenced to update the player model or the sound effects.
+const TREE_BRANCH = loadAsset('./media/textures/branch.png');
+
+const AUDIO_THEME = new Audio('../media/sounds/music.mp3');
+const AUDIO_GAMEOVER = new Audio('../media/sounds/gameOver.mp3');
+AUDIO_THEME.loop = AUDIO_GAMEOVER.loop = true;
+
+const AUDIO_CUT = new Audio('../media/sounds/chop.mp3');
+const AUDIO_KILLED = new Audio('../media/sounds/dead.mp3');
 
 document.addEventListener('click', startGame);
-// TODO:
-// Add comments.
-// Revise readme.
-// Reorganize function order.
-// Replace onClicks with ontouchstart, apparently this will work with mobile devices to provide instant effects.
-// Use window.innerHeight and innerWidth to size the segments according to the screen size.
 
-
-// Make lumberjack-idle and lumberjack-cut gifs.
-// Only need one branch texture, just flip it.
-
-// A function to help load textures in memory ahead of time.
+// A function to help load textures in memory ahead of time. 
+// I don't know if this is even doing what I want, but it was an attempt.
 function loadAsset(url) {
     const img = new Image();
     img.src = url;
     return img;
 }
 
-function addNewTreeSegment(rear, score, i) {
+// Function used to keep the tree segments coming.
+function addNewTreeSegment(rear, score, center, i) {
+
+    // Images are branches, divs are bare logs.
     var segment = rear == 0 || rear == 2 ?
         document.createElement('img') :
         document.createElement('div');
 
+    // Set the appropriate ID of the next log.
     segment.id = i == -1 ? 'log-' + (score + 6) : 'log-' + i;
 
     segment.className = 'log-segments';
 
+    // If it is a bare log, it does not need to be assigned the branch texture.
     if (rear == 1) return segment;
 
-    segment.src = BRANCH.src;
-    segment.style.translate = rear == 0 ? '-70%' : '5%';
+    // Assign the branch texture to the segment.
+    segment.src = TREE_BRANCH.src;
+    segment.style.translate = rear == 0 ? '-99%' : (center.getBoundingClientRect().width - 1) + 'px';
     segment.style.transform = rear == 0 ? 'scaleX(1)' : 'scaleX(-1)';
 
     return segment;
 }
 
+// For the tree segment options, 0 is a left branch, 1 is neither, and 2 is a right branch.
+// The first tree segment is always a 1 so the player does not die instantly.
+// Segments are randomly chosen.
+function buildTree(theTree, screenCenter) {
+    for (var i = 0; i < 6; i++) {
+        var newLog = document.createElement('p');
+        i % 2 == 0 ? theTree.addLog(1) : theTree.addLog(Math.floor(Math.random() * 3));
+        
+        newLog.innerText = 'LOG' + theTree.getRear();
+        newLog.id = 'log-' + i;
+        
+        var newSegment = addNewTreeSegment(theTree.getRear(), theTree.getScore(), screenCenter, i);
+        
+        i == 0 ? screenCenter.appendChild(newSegment) : screenCenter.insertBefore(newSegment, document.getElementById('log-' + (i - 1)));
+    }
+    
+    document.getElementById('score').innerText = '0';
+    
+}
+
+// Function used to manage the tree segments, check for game-overs, and keep the game moving.
+function chop(theTree, screenLeft, screenCenter, screenRight, player, body) {
+    
+    // Get the side that the player tapped on.
+    var clickedSide = event.target.id;
+    
+    // Flip sides, if need be.
+    clickedSide == 'screen-left' ? handlePlayerSide(theTree, player, screenCenter, 0) : handlePlayerSide(theTree, player, screenCenter, 1);
+    
+    // CHOP.
+    AUDIO_CUT.cloneNode(true).play();
+    
+    // Slight delay so that the player can visibly react to player input.
+    setTimeout(function () {
+        
+        // Check if they are going into a branch at the ground level.
+        if ((clickedSide == 'screen-left' && theTree.getFront() == 0) || (clickedSide == 'screen-right' && theTree.getFront() == 2)) {
+            gameOver(player, screenLeft, screenRight, screenCenter, theTree.getScore());
+            return;
+        }
+
+        // Tim-ber!
+        theTree.removeLog();
+        document.getElementById('log-' + theTree.getScore()).remove();
+        
+        // Give the effect that the trunk is losing a segment by switching between regular and an offset texture.
+        screenCenter.style.backgroundImage = 'url(' + TREE_TRUNK[theTree.score % 2].src + ')';
+        
+        // Make sure there is never a die-die situation where cutting either side kills you.
+        (theTree.getScore() + 6) % 2 == 0 ? theTree.addLog(1) : theTree.addLog(Math.floor(Math.random() * 3));
+
+        // Create and add the new segment.
+        var newSegment = addNewTreeSegment(theTree.getRear(), theTree.getScore(), screenCenter, -1);
+        screenCenter.insertBefore(newSegment, document.getElementById('log-' + (theTree.getScore() + 5)));
+        
+        // Check if a branch has fallen on top of the player.
+        if ((clickedSide == 'screen-left' && theTree.getFront() == 0) || (clickedSide == 'screen-right' && theTree.getFront() == 2)) {
+            gameOver(player, screenLeft, screenRight, screenCenter, theTree.getScore());
+            return;
+        }
+        
+        // Increase and update the score.
+        theTree.score++;
+        document.getElementById('score').innerText = theTree.getScore();
+    }, 100);
+    
+}
+
+// Function to manage where the player is being displayed with every input.
+function handlePlayerSide(theTree, player, center, side) {
+    
+    // Removing, updating, and adding the player back seems to work fine.
+    player.remove();
+    player = PLAYER_CUT;
+
+    // Flip them if needed.
+    player.style.transform = side == 0 ? 'scaleX(-1)' : 'scaleX(1)';
+    player.style.translate = side == 0 ? '-100%' : center.getBoundingClientRect().width + 'px';
+    
+    center.appendChild(player);
+    
+    // This will return the player to the idle position after the cut animation has had a turn.
+    setTimeout(function () {
+        player.remove();
+        player = PLAYER_IDLE;
+        player.style.transform = side == 0 ? 'scaleX(-1)' : 'scaleX(1)';
+        player.style.translate = side == 0 ? '-100%' : center.getBoundingClientRect().width + 'px';
+        center.appendChild(player);
+    }, 100);
+    
+}
+
+// Function called when the player loses.
+function gameOver(player, left, right, center, score) {
+
+    // Stop that infernal galop.
+    AUDIO_THEME.pause();
+    AUDIO_THEME.currentTime = 0;
+
+    // Ouch!
+    AUDIO_KILLED.cloneNode(true).play();
+    
+    // Update the player model to be of the dead variety.
+    var diedSide = player.style.translate;
+    player.remove();
+    player = PLAYER_DEAD;
+    player.style.translate = diedSide;
+    center.appendChild(player);
+    
+    // It's no fun being dead.
+    left.style.pointerEvents = right.style.pointerEvents = 'none';
+    
+    // Let that sink in before accepting your fate.
+    setTimeout(function () {
+        
+        body.innerHTML = '';
+        body.style.backgroundColor = 'firebrick';
+        body.style.display = 'block';
+        
+        var gameOverTitle = document.createElement('p');
+        gameOverTitle.id = 'game-over';
+        gameOverTitle.innerText = 'GAME OVER!\nSCORE: ' + score;
+        body.appendChild(gameOverTitle);
+        
+        var restartButton = document.createElement('button');
+        restartButton.id = 'restart-button';
+        restartButton.innerText = 'RETRY?';
+        body.appendChild(restartButton);
+        restartButton.addEventListener('click', restart);
+        
+        // :O
+        AUDIO_GAMEOVER.play();
+        
+    }, 2500);
+}
+
+// Function used to restart the game.
+function restart() {
+    body.innerHTML = '';
+    body.style = '';
+    
+    AUDIO_GAMEOVER.pause();
+    AUDIO_GAMEOVER.currentTime = 0;
+    
+    var replaceLeft = document.createElement('div');
+    var replaceCenter = document.createElement('div');
+    var replaceRight = document.createElement('div');
+    var replaceScore = document.createElement('div');
+    var replacePrompt = document.createElement('div');
+    
+    replaceLeft.id = 'screen-left';
+    replaceCenter.id = 'screen-center';
+    replaceRight.id = 'screen-right';
+    replaceScore.id = 'score';
+    replacePrompt.id = 'click-prompt';
+    
+    body.appendChild(replaceLeft);
+    body.appendChild(replaceCenter);
+    body.appendChild(replaceRight);
+    body.appendChild(replaceScore);
+    replaceCenter.appendChild(replacePrompt);
+    
+    startGame();
+}
 
 // Function used to setup the game.
 function startGame() {
@@ -63,170 +238,23 @@ function startGame() {
     var screenRight = document.getElementById('screen-right');
     var body = document.getElementById('body');
 
+    // Build the initial tree.
     buildTree(theTree, screenCenter);
 
+    // Setup the player.
     var player = new Image();
     player.id = 'player';
-    player = IDLE;
+    player = PLAYER_IDLE;
+    player.style.transform = 'scaleX(-1)';
+    player.style.translate = '-100%';
+    screenCenter.appendChild(player);
 
-    screenLeft.appendChild(player);
-
+    // Event listeners for tapping the left or right side of the tree.
     for (var side of [screenLeft, screenRight]) {
         side.addEventListener('click', () => chop(theTree, screenLeft, screenCenter, screenRight, player, body));
     }
 
-    handlePlayerSide(theTree, screenLeft, screenRight, player, 0);
+    // Cause migraines probably.
+    AUDIO_THEME.play();
 
-}
-
-// For the tree segment options, 0 is a left branch, 1 is neither, and 2 is a right branch.
-// The first tree segment always has to be a 1 so the player does not die instantly.
-
-function buildTree(theTree, screenCenter) {
-    for (var i = 0; i < 6; i++) {
-        var newLog = document.createElement('p');
-        i % 2 == 0 ? theTree.addLog(1) : theTree.addLog(Math.floor(Math.random() * 3));
-
-        newLog.innerText = 'LOG' + theTree.getRear();
-        newLog.id = 'log-' + i;
-
-        var newSegment = addNewTreeSegment(theTree.getRear(), theTree.getScore(), i);
-
-        i == 0 ? screenCenter.appendChild(newSegment) : screenCenter.insertBefore(newSegment, document.getElementById('log-' + (i - 1)));
-    }
-
-    document.getElementById('score').innerText = '0';
-
-}
-
-function handlePlayerSide(theTree, screenLeft, screenRight, player, side) {
-
-    // Evaluate which side of the tree the player should be on.
-    switch (side) {
-        // Place player on the left.
-        case 0:
-            screenLeft.innerHTML = screenRight.innerHTML = '';
-            player = CUT;
-            player.style.transform = 'scaleX(1)';
-            screenLeft.appendChild(player);
-            setTimeout(function(){
-                player = IDLE;
-                screenLeft.innerHTML = '';
-                player.style.transform = 'scaleX(1)';
-                screenLeft.appendChild(player);
-            }, 100);
-            break;
-
-        // Place player on the right.
-        case 1:
-            screenLeft.innerHTML = screenRight.innerHTML = '';
-            player = CUT;
-            player.style.transform = 'scaleX(-1)';
-            screenRight.appendChild(player);
-            setTimeout(function(){
-                player = IDLE;
-                screenRight.innerHTML = '';
-                player.style.transform = 'scaleX(-1)';
-                screenRight.appendChild(player);
-            }, 100);
-            break;
-    }
-
-
-}
-
-function chop(theTree, screenLeft, screenCenter, screenRight, player, body) {
-
-    var clickedSide = event.target.id;
-    // Flip sides.
-    clickedSide == 'screen-left' ? handlePlayerSide(theTree, screenLeft, screenRight, player, 0) : handlePlayerSide(theTree, screenLeft, screenRight, player, 1);
-
-    setTimeout(function() {
-
-        // Check if they are going into a branch at the ground level.
-        if ((clickedSide == 'screen-left' && theTree.getFront() == 0) || (clickedSide == 'screen-right' && theTree.getFront() == 2)) {
-            
-            gameOver(player, screenLeft, screenRight, theTree.getScore());
-            return;
-        }
-        
-        theTree.removeLog();
-        document.getElementById('log-' + theTree.getScore()).remove();
-        
-        // Make sure there is never a die-die situation where cutting either side kills you.
-        (theTree.getScore() + 6) % 2 == 0 ? theTree.addLog(1) : theTree.addLog(Math.floor(Math.random() * 3));
-        
-        var newSegment = addNewTreeSegment(theTree.getRear(), theTree.getScore(), -1);
-        
-        
-        screenCenter.insertBefore(newSegment, document.getElementById('log-' + (theTree.getScore() + 5)));
-        
-        // Check if a branch has fallen on top of the player.
-        if ((clickedSide == 'screen-left' && theTree.getFront() == 0) || (clickedSide == 'screen-right' && theTree.getFront() == 2)) {
-            gameOver(player, screenLeft, screenRight, theTree.getScore());
-            return;
-        }
-
-        // Increase and update the score.
-        theTree.score++;
-        document.getElementById('score').innerText = theTree.getScore();
-    }, 100);
-
-}
-
-// Function called when the player loses.
-function gameOver(player, left, right, score) {
-
-        var diedSide = player.parentElement;
-        left.innerHTML = right.innerHTML = '';
-        player = DEAD;
-        diedSide.appendChild(player);
-
-    left.style.pointerEvents = right.style.pointerEvents = 'none';
-
-    setTimeout(function() {
-
-        body.innerHTML = '';
-        body.style.background = 'linear-gradient(#9e2424, #701212)';
-        body.style.display = 'block';
-        
-        var gameOverTitle = document.createElement('p');
-        gameOverTitle.id = 'game-over';
-        gameOverTitle.innerText = 'GAME OVER!\nSCORE: ' + score;
-        body.appendChild(gameOverTitle);
-        
-        var restartButton = document.createElement('button');
-        restartButton.id = 'restart-button';
-        restartButton.innerText = 'RETRY';
-        body.appendChild(restartButton);
-        restartButton.addEventListener('click', restart);
-
-    }, 1000);
-    
-}
-
-// Function used to restart the game.
-function restart() {
-    body.innerHTML = '';
-    body.style = '';
-
-    var replaceLeft = document.createElement('div');
-    var replaceCenter = document.createElement('div');
-    var replaceRight = document.createElement('div');
-    var replaceScore = document.createElement('div');
-    var replacePrompt = document.createElement('div');
-
-    replaceLeft.id = 'screen-left';
-    replaceCenter.id = 'screen-center';
-    replaceRight.id = 'screen-right';
-    replaceScore.id = 'score';
-    replacePrompt.id = 'click-prompt';
-
-    body.appendChild(replaceLeft);
-    body.appendChild(replaceCenter);
-    body.appendChild(replaceRight);
-    body.appendChild(replaceScore);
-    replaceCenter.appendChild(replacePrompt);
-
-    startGame();
 }
