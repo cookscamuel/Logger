@@ -38,7 +38,6 @@ body {
 }
 
 #screen-left, #screen-right {
-    background-color: rgb(139, 139, 139);
     background-image: url('../media/textures/sky.png');
     background-size: 55%;
     background-repeat: repeat;
@@ -109,6 +108,8 @@ body {
     body {
         height: 85vh;
         background-size: 35%;
+        image-rendering: pixelated; 
+        image-rendering: crisp-edges;
     }
 
     .log-segments {
@@ -116,7 +117,4 @@ body {
         height: 12.16vh;
     }
 
-    #player {
-        bottom: 15vh;
-    }
 }

@@ -155,7 +155,7 @@ function gameOver(player, left, right, center, score) {
     AUDIO_THEME.currentTime = 0;
 
     // Ouch!
-    AUDIO_KILLED.cloneNode(true).play();
+    AUDIO_KILLED.play();
     
     // Update the player model to be of the dead variety.
     var diedSide = player.style.translate;
@@ -197,7 +197,7 @@ function restart() {
     body.style = '';
     
     AUDIO_GAMEOVER.pause();
-    AUDIO_GAMEOVER.currentTime = 0;
+    AUDIO_GAMEOVER.currentTime = AUDIO_KILLED.currentTime = 0;
     
     var replaceLeft = document.createElement('div');
     var replaceCenter = document.createElement('div');
