@@ -100,8 +100,9 @@ function chop(theTree, screenLeft, screenCenter, screenRight, player, body) {
         theTree.removeLog();
         document.getElementById('log-' + theTree.getScore()).remove();
         
+        // Not currently updating gracefully.
         // Give the effect that the trunk is losing a segment by switching between regular and an offset texture.
-        screenCenter.style.backgroundImage = 'url(' + TREE_TRUNK[theTree.score % 2].src + ')';
+        // screenCenter.style.backgroundImage = 'url(' + TREE_TRUNK[theTree.score % 2].src + ')';
         
         // Make sure there is never a die-die situation where cutting either side kills you.
         (theTree.getScore() + 6) % 2 == 0 ? theTree.addLog(1) : theTree.addLog(Math.floor(Math.random() * 3));
@@ -171,7 +172,6 @@ function gameOver(player, left, right, center, score) {
     setTimeout(function () {
         
         body.innerHTML = '';
-        body.style.backgroundColor = 'firebrick';
         body.style.display = 'block';
         
         var gameOverTitle = document.createElement('p');

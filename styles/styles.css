@@ -107,7 +107,6 @@ body {
 @media (width <=1024px) {
     body {
         height: 85vh;
-        background-size: 35%;
         image-rendering: pixelated; 
         image-rendering: crisp-edges;
     }
@@ -117,4 +116,7 @@ body {
         height: 12.16vh;
     }
 
+    #player {
+        bottom: 0;
+    }
 }
