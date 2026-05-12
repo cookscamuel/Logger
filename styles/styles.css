@@ -3,10 +3,6 @@
     src: url(../media/vcr.ttf);
 }
 
-html {
-    touch-action: none;
-}
-
 body {
     display: grid;
     grid-template-columns: 40% 20% 40%;
@@ -22,6 +18,7 @@ body {
     image-rendering: pixelated; 
     image-rendering: crisp-edges;
     background-color: darkgreen;
+    touch-action: manipulation;
 }
 
 @keyframes flashText {
