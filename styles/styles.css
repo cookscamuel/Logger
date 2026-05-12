@@ -3,6 +3,10 @@
     src: url(../media/vcr.ttf);
 }
 
+html {
+    touch-action: manipulation;
+}
+
 body {
     display: grid;
     grid-template-columns: 40% 20% 40%;
@@ -11,13 +15,13 @@ body {
     font-family: VCR;
     letter-spacing: -2px;
     user-select: none;
-    touch-action: none;
     margin: 0;
     background-image: url('../media/textures/grass.png');
     background-size: 11%;
     background-repeat: repeat;
     image-rendering: pixelated; 
     image-rendering: crisp-edges;
+    background-color: darkgreen;
 }
 
 @keyframes flashText {
@@ -107,7 +111,7 @@ body {
 @media (width <=1024px) {
     body {
         height: 85vh;
-        image-rendering: pixelated; 
+        image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
     }
 
@@ -117,6 +121,6 @@ body {
     }
 
     #player {
-        bottom: 2vh;
+        bottom: 3vh;
     }
 }
