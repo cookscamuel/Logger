@@ -113,7 +113,8 @@ body {
 @media (width <=1024px) {
     body {
         height: 85vh;
-        image-rendering: -webkit-optimize-contrast;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
     }
 
     .log-segments {
