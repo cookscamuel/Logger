@@ -113,6 +113,9 @@ body {
 @media (width <=1024px) {
     body {
         height: 85vh;
+        background-image: url('../media/textures/grass.png');
+        background-size: 128px;
+        background-repeat: repeat;
         image-rendering: pixelated;
         image-rendering: crisp-edges;
     }
