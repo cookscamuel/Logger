@@ -13,7 +13,7 @@ body {
     user-select: none;
     margin: 0;
     background-image: url('../media/textures/grass.png');
-    background-size: 64px 64px;
+    background-size: 128px;
     background-repeat: repeat;
     image-rendering: pixelated; 
     image-rendering: crisp-edges;
