@@ -24,7 +24,7 @@ const MEDALS = [
     loadImage('./media/textures/medal_6.png')
 ];
 
-const MEDALS_MILESTONES = [50, 100, 250, 500, 1000, 2000];
+const MEDALS_MILESTONES = [50, 100, 250, 500, 750, 1000];
 
 const AUDIO_THEME = new Audio('../media/sounds/music.mp3');
 const AUDIO_GAMEOVER = new Audio('../media/sounds/gameOver.mp3');
