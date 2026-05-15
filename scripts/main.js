@@ -1,18 +1,30 @@
 import treeQueue from './tree.js';
 
+// Constants that can be referenced to update different parts of the game.
 // These shouldn't be just hanging out here loose like this. It's fine for now though.
-const PLAYER_IDLE = loadAsset('./media/textures/idle.gif');
-const PLAYER_CUT = loadAsset('./media/textures/cut.png');
-const PLAYER_DEAD = loadAsset('./media/textures/dead.png');
+const PLAYER_IDLE = loadImage('./media/textures/idle.gif');
+const PLAYER_CUT = loadImage('./media/textures/cut.png');
+const PLAYER_DEAD = loadImage('./media/textures/dead.png');
 PLAYER_IDLE.id = PLAYER_CUT.id = PLAYER_DEAD.id = 'player';
 
 const TREE_TRUNK = [
-    loadAsset('./media/textures/bark_0.png'), 
-    loadAsset('./media/textures/bark_1.png')
+    loadImage('./media/textures/bark_0.png'), 
+    loadImage('./media/textures/bark_1.png')
 ];
 
-// Constants that can be referenced to update the player model or the sound effects.
-const TREE_BRANCH = loadAsset('./media/textures/branch.png');
+const TREE_BRANCH = loadImage('./media/textures/branch.png');
+
+const MEDALS = [
+    loadImage('./media/textures/medal_0.png'),
+    loadImage('./media/textures/medal_1.png'),
+    loadImage('./media/textures/medal_2.png'),
+    loadImage('./media/textures/medal_3.png'),
+    loadImage('./media/textures/medal_4.png'),
+    loadImage('./media/textures/medal_5.png'),
+    loadImage('./media/textures/medal_6.png')
+];
+
+const MEDALS_MILESTONES = [50, 100, 250, 500, 1000, 2000];
 
 const AUDIO_THEME = new Audio('../media/sounds/music.mp3');
 const AUDIO_GAMEOVER = new Audio('../media/sounds/gameOver.mp3');
@@ -20,12 +32,13 @@ AUDIO_THEME.loop = AUDIO_GAMEOVER.loop = true;
 
 const AUDIO_CUT = new Audio('../media/sounds/chop.mp3');
 const AUDIO_KILLED = new Audio('../media/sounds/dead.mp3');
+const AUDIO_REWARD = new Audio('../media/sounds/reward.mp3');
 
 document.addEventListener('click', startGame);
 
 // A function to help load textures in memory ahead of time. 
 // I don't know if this is even doing what I want, but it was an attempt.
-function loadAsset(url) {
+function loadImage(url) {
     const img = new Image();
     img.src = url;
     return img;
@@ -100,7 +113,7 @@ function chop(theTree, screenLeft, screenCenter, screenRight, player, body) {
         theTree.removeLog();
         document.getElementById('log-' + theTree.getScore()).remove();
         
-        // Not currently updating gracefully.
+        // Not currently updating gracefully on mobile devices.
         // Give the effect that the trunk is losing a segment by switching between regular and an offset texture.
         // screenCenter.style.backgroundImage = 'url(' + TREE_TRUNK[theTree.score % 2].src + ')';
         
@@ -120,6 +133,12 @@ function chop(theTree, screenLeft, screenCenter, screenRight, player, body) {
         // Increase and update the score.
         theTree.score++;
         document.getElementById('score').innerText = theTree.getScore();
+
+        // Play a sound when a score milestone is hit.
+        for (var i = 0; i < MEDALS_MILESTONES.length; i++) {
+            if (theTree.score == MEDALS_MILESTONES[i]) AUDIO_REWARD.cloneNode(true).play();
+        }
+
     }, 100);
     
 }
@@ -178,10 +197,27 @@ function gameOver(player, left, right, center, score) {
         gameOverTitle.id = 'game-over';
         gameOverTitle.innerText = 'GAME OVER!\nSCORE: ' + score;
         body.appendChild(gameOverTitle);
+
+        // Determine the medal awarded based on the score.
+        var reward = 0;
         
+        while (reward < 7) {
+            if (score >= MEDALS_MILESTONES[reward]) {
+                reward++;
+            }
+            else {
+                break;
+            }
+        };
+        
+        var medal = document.createElement('img');
+        medal = MEDALS[reward];
+        medal.id = 'medal';
+        body.appendChild(medal);
+
         var restartButton = document.createElement('button');
         restartButton.id = 'restart-button';
-        restartButton.innerText = 'RETRY?';
+        restartButton.innerText = 'KEEP CHOPPIN\'';
         body.appendChild(restartButton);
         restartButton.addEventListener('click', restart);
         

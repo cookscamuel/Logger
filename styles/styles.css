@@ -67,11 +67,12 @@ body {
     left: 50%;
     translate: -50%;
     margin-top: 5vh;
+    width: fit-content;
 }
 
 #game-over {
     text-align: center;
-    color: rgb(255, 255, 255);
+    color: gold;
     font-size: 400%;
 }
 
@@ -79,13 +80,14 @@ body {
     display: block;
     margin: auto;
     font-size: 300%;
-    color: white;
-    background-color: black;
+    color: green;
+    background-color: gold;
+    border: none;
     font-family: VCR;
 }
 
 #restart-button:hover {
-    background: rgb(36, 36, 36);
+    background: rgb(201, 133, 6);
 }
 
 #player {
@@ -105,11 +107,17 @@ body {
     z-index: 1;
 }
 
+#medal {
+    display: block;
+    margin: auto;
+    width: 8vw;
+    margin-bottom: 10vh;
+}
+
 @media (width <=1024px) {
     body {
         height: 85vh;
         image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
     }
 
     .log-segments {
@@ -119,5 +127,9 @@ body {
 
     #player {
         bottom: 3.5vh;
+    }
+
+    #medal {
+        width: 25vw;
     }
 }
