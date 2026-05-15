@@ -86,10 +86,6 @@ body {
     font-family: VCR;
 }
 
-#restart-button:hover {
-    background: rgb(201, 133, 6);
-}
-
 #player {
     width: 20vh;
     display: block;
