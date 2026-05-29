@@ -9,13 +9,13 @@ body {
     font-family: VCR;
     letter-spacing: 0.1vw;
     user-select: none;
+    touch-action: none;
     margin: 0;
     background-image: url('../media/textures/grass.png');
     background-repeat: repeat;
     image-rendering: pixelated; 
     image-rendering: crisp-edges;
     background-color: darkgreen;
-    touch-action: manipulation;
 }
 
 #screen-bounds {
@@ -27,6 +27,8 @@ body {
     margin: auto;
     place-content: center;
     position: relative;
+    user-select: none;
+    touch-action: none;
 }
 
 /* Border image is grass
@@ -141,7 +143,7 @@ background image is sky */
         font-size: 300%;
     }
 
-    #restart-button, #click-prompt {
+    #restart-button, #click-prompt, #medal-title {
         font-size: 200%;
     }
 
