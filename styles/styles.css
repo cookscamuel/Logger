@@ -4,13 +4,10 @@
 }
 
 body {
-    display: grid;
-    grid-template-columns: 40% 20% 40%;
-    height: 95vh;
     overflow-y: hidden;
     overflow-x: hidden;
     font-family: VCR;
-    letter-spacing: -2px;
+    letter-spacing: 0.1vw;
     user-select: none;
     margin: 0;
     background-image: url('../media/textures/grass.png');
@@ -20,6 +17,20 @@ body {
     background-color: darkgreen;
     touch-action: manipulation;
 }
+
+#screen-bounds {
+    display: grid;
+    grid-template-columns: 40% 20% 40%;
+    height: 80vh;
+    align-self: auto;
+    justify-content: center;
+    margin: auto;
+    place-content: center;
+    position: relative;
+}
+
+/* Border image is grass
+background image is sky */
 
 @keyframes flashText {
     0% {
@@ -32,14 +43,17 @@ body {
 
 #click-prompt {
     text-align: center;
+    position: absolute;
     color: gold;
-    font-size: 200%;
+    font-size: 5vw;
+    font-weight: bolder;
+    justify-self: center;
+    place-self: center;
     animation: flashText infinite 1s;
     animation-timing-function: steps(1); 
 }
 
 #screen-left, #screen-right {
-    background-image: url('../media/textures/sky.png');
     background-size: 55%;
     background-repeat: repeat;
     image-rendering: pixelated; 
@@ -50,9 +64,7 @@ body {
     display: flex;
     justify-content: center;
     flex-direction: column;
-    background-color: rgb(109, 68, 14);
     cursor: not-allowed;
-    background-image: url('../media/textures/bark_1.png');
     background-size: 50%;
     background-repeat: repeat;
     image-rendering: pixelated; 
@@ -62,7 +74,7 @@ body {
 #score {
     z-index: 3;
     color: gold;
-    font-size: 400%;
+    font-size: 5vw;
     position: absolute;
     left: 50%;
     translate: -50%;
@@ -73,13 +85,13 @@ body {
 #game-over {
     text-align: center;
     color: gold;
-    font-size: 400%;
+    font-size: 5vw;
 }
 
 #restart-button {
     display: block;
     margin: auto;
-    font-size: 300%;
+    font-size: 3vw;
     color: green;
     background-color: gold;
     border: none;
@@ -89,16 +101,16 @@ body {
 #player {
     width: 20vh;
     display: block;
-    position: absolute;
-    bottom: 5vh;
     z-index: 2;
     pointer-events: none;
+    position: absolute;
+    bottom: 0;
 }
 
 .log-segments {
     margin: auto;
-    width: 25vw;
-    height: 15.83vh;
+    width: 20vw;
+    height: 13.333vh;
     pointer-events: none;
     z-index: 1;
 }
@@ -107,21 +119,30 @@ body {
     display: block;
     margin: auto;
     width: 8vw;
+}
+
+#medal-title {
+    text-align: center;
     margin-bottom: 10vh;
+    font-size: 1.5vw;
 }
 
 @media (width <=1024px) {
-    body {
-        height: 85vh;
-    }
 
     .log-segments {
         width: 60vw;
-        height: 12.16vh;
     }
 
-    #player {
-        bottom: 3.5vh;
+    #score {
+        font-size: 400%;
+    }
+
+    #game-over {
+        font-size: 300%;
+    }
+
+    #restart-button, #click-prompt {
+        font-size: 200%;
     }
 
     #medal {
