@@ -9,7 +9,7 @@ body {
     font-family: VCR;
     letter-spacing: 0.1vw;
     user-select: none;
-    touch-action: none;
+    touch-action: manipulation;
     margin: 0;
     background-image: url('../media/textures/grass.png');
     background-repeat: repeat;
@@ -28,11 +28,8 @@ body {
     place-content: center;
     position: relative;
     user-select: none;
-    touch-action: none;
+    touch-action: manipulation;
 }
-
-/* Border image is grass
-background image is sky */
 
 @keyframes flashText {
     0% {
