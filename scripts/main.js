@@ -2,9 +2,9 @@ import treeQueue from './tree.js';
 
 // Determine whether or not the device uses touchscreen.
 // An attempt at making input more snappy on mobile.
-const IS_TOUCH_DEVICE = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+// const IS_TOUCH_DEVICE = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-const INPUT_TYPE = IS_TOUCH_DEVICE ? 'touchstart' : 'click';
+// const INPUT_TYPE = IS_TOUCH_DEVICE ? 'touchstart' : 'click';
 
 // Constants that can be referenced to update different parts of the game.
 // These shouldn't be just hanging out here loose like this. It's fine for now though.
@@ -44,7 +44,7 @@ const AUDIO_KILLED = new Audio('../media/sounds/dead.mp3');
 const AUDIO_REWARD = new Audio('../media/sounds/reward.mp3');
 const AUDIO_FINISH = new Audio('../media/sounds/finish.mp3')
 
-document.addEventListener(INPUT_TYPE, startGame);
+document.addEventListener('click', startGame);
 
 // A function to help load textures in memory ahead of time. 
 // I don't know if this is even doing what I want, but it was an attempt.
@@ -242,7 +242,7 @@ function gameOver(player, left, right, center, score) {
         restartButton.id = 'restart-button';
         restartButton.innerText = 'KEEP CHOPPIN\'';
         body.appendChild(restartButton);
-        restartButton.addEventListener(INPUT_TYPE, restart);
+        restartButton.addEventListener('click', restart);
 
         // :O
         AUDIO_GAMEOVER.play();
@@ -286,7 +286,7 @@ function restart() {
 function startGame() {
 
     // Prevent multiple clicks and remove the start screen.
-    document.removeEventListener(INPUT_TYPE, startGame);
+    document.removeEventListener('click', startGame);
 
     // Remove the loading prompt.
     document.getElementById('click-prompt').remove()
@@ -316,7 +316,7 @@ function startGame() {
 
     // Event listeners for tapping the left or right side of the tree.
     for (var side of [screenLeft, screenRight]) {
-        side.addEventListener(INPUT_TYPE, () => chop(theTree, screenLeft, screenCenter, screenRight, player, body));
+        side.addEventListener('click', () => chop(theTree, screenLeft, screenCenter, screenRight, player, body));
     }
 
     // Cause migraines probably.
