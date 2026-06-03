@@ -2,9 +2,11 @@ import treeQueue from './tree.js';
 
 // Determine whether or not the device uses touchscreen.
 // An attempt at making input more snappy on mobile.
-// const IS_TOUCH_DEVICE = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+const IS_TOUCH_DEVICE = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 // const INPUT_TYPE = IS_TOUCH_DEVICE ? 'touchstart' : 'click';
+
+document.getElementById('click-prompt').innerText = IS_TOUCH_DEVICE ? "TAP TO START" : "CLICK TO START";
 
 // Constants that can be referenced to update different parts of the game.
 // These shouldn't be just hanging out here loose like this. It's fine for now though.
@@ -13,10 +15,7 @@ const PLAYER_CUT = loadImage('./media/textures/cut.png');
 const PLAYER_DEAD = loadImage('./media/textures/dead.png');
 PLAYER_IDLE.id = PLAYER_CUT.id = PLAYER_DEAD.id = 'player';
 
-const TREE_TRUNK = [
-    loadImage('./media/textures/bark_0.png'),
-    loadImage('./media/textures/bark_1.png')
-];
+const TREE_TRUNK = loadImage('./media/textures/bark.png');
 
 const TREE_BRANCH = loadImage('./media/textures/branch.png');
 
@@ -122,10 +121,9 @@ function chop(theTree, screenLeft, screenCenter, screenRight, player, body) {
         // Tim-ber!
         theTree.removeLog();
         document.getElementById('log-' + theTree.getScore()).remove();
-
-        // Not currently updating gracefully on mobile devices.
-        // Give the effect that the trunk is losing a segment by switching between regular and an offset texture.
-        // screenCenter.style.backgroundImage = 'url(' + TREE_TRUNK[theTree.score % 2].src + ')';
+        
+        // Give the effect that the trunk is losing a segment by offsetting texture.
+        screenCenter.style.backgroundPosition = theTree.score % 2 == 0 ? "0 32px" : "0 0";
 
         // Make sure there is never a die-die situation where cutting either side kills you.
         (theTree.getScore() + 6) % 2 == 0 ? theTree.addLog(1) : theTree.addLog(Math.floor(Math.random() * 3));
@@ -301,7 +299,10 @@ function startGame() {
     var body = document.getElementById('body');
 
     screenLeft.style.backgroundImage = screenRight.style.backgroundImage = "url('../media/textures/sky.png')";
-    screenCenter.style.backgroundImage = "url('../media/textures/bark_1.png')";
+    screenCenter.style.backgroundImage = "url('" + TREE_TRUNK.src + "')";
+    screenCenter.style.backgroundSize = "128px 128px";
+    screenCenter.style.backgroundPosition = "0 0";
+
 
     // Build the initial tree.
     buildTree(theTree, screenCenter);

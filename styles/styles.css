@@ -9,7 +9,6 @@ html {
 
 body {
     overflow-y: hidden;
-    overflow-x: hidden;
     font-family: VCR;
     letter-spacing: 0.1vw;
     user-select: none;
@@ -33,6 +32,7 @@ body {
     position: relative;
     user-select: none;
     touch-action: none;
+    overflow-x: hidden;
 }
 
 @keyframes flashText {
