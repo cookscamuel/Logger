@@ -3,8 +3,8 @@
     src: url(../media/vcr.ttf);
 }
 
-html {
-    touch-action: none;
+* {
+  touch-action: none;
 }
 
 body {
@@ -12,7 +12,6 @@ body {
     font-family: VCR;
     letter-spacing: 0.1vw;
     user-select: none;
-    touch-action: none;
     margin: 0;
     background-image: url('../media/textures/grass.png');
     background-repeat: repeat;
@@ -31,7 +30,6 @@ body {
     place-content: center;
     position: relative;
     user-select: none;
-    touch-action: none;
     overflow-x: hidden;
 }
 
@@ -62,7 +60,6 @@ body {
     image-rendering: pixelated; 
     image-rendering: crisp-edges;
     user-select: none;
-    touch-action: none;
 }
 
 #screen-center {
